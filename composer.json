@@ -1,0 +1,21 @@
+{
+    "name": "lkf/testtask-2021ivan-da-marya",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Konstantin Lukyanenok",
+            "email": "loukianen@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/App.php",
+            "src/Config.php",
+            "src/Db.php",
+            "src/Router.php",
+            "controllers/DayController.php",
+            "controllers/MainController.php"
+        ]
+    },
+    "require": {}
+}
