@@ -1,23 +1,31 @@
 <?php
-namespace controllers;
- 
-// Указываем, что используем базовый класс контроллера.
-use classes\BaseController;
-use classes\App;
- 
-// Объявляем класс контроллера как дочерний от базового контроллера.
+namespace Controllers;
+
+use App\Tpl;
+use App\App;
+
 class MainController
 {
-    // Переопределенный метод run для отрисовки страницы
-    public function run($data)
+    // Переменная для отрисовщика шаблонов
+    private $tpl;
+
+    public function run()
     {
-      $this->render();
+      $this->tpl = new Tpl();
+      return $this->render();
+    }
+    // Выбираем пользователей из базы по типу
+    private function getUsersData()
+    {
+      $query = 'SELECT `id`, `name` FROM `users` WHERE `type` = 5 ORDER BY `name`';
+      return App::$db->query($query);
     }
 
-    public function render()
+    private function render()
     {
-      $result = file_get_contents(App::$config->get('basedir').'/views/' . main . '.tpl');
-      return $result;
+      $usersData = $this->getUsersData();
+      $this->tpl->makeUsersList($usersData);
+      $this->tpl->render('main');
 	}
 }
 ?>

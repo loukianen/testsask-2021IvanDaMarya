@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS `rooms` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `num` varchar(100) NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `build` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `floor` int(11) NOT NULL,
+  `sort` int(11) NOT NULL
+);

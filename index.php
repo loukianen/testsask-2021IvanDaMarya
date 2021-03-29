@@ -16,7 +16,7 @@ if (file_exists($autoloadPath1)) {
 }
  
 // Подключение класса App.
-use src\App;
+use App\App;
 
  
 // Инициализация App.

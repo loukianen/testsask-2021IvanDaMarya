@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `builds` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `name` varchar(100) NOT NULL,
+  `hotel` int(11) NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+

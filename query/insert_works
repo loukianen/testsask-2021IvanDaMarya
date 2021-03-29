@@ -1,0 +1,4 @@
+INSERT OR REPLACE INTO `works` (`id`, `name`, `created`, `checklist`, `type`, `hotel`, `staff_type`) VALUES
+(1, 'Заезд', '2018-08-23 16:41:34', '', 'room', 0, 5),
+(2, 'Генеральная', '2018-08-23 16:41:34', '', 'room', 0, 5),
+(3, 'Текущая', '2018-08-23 16:42:03', '', 'room', 0, 5);

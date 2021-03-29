@@ -1,0 +1,32 @@
+{
+  "name": "testtask-2021ivandamarya",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loukianen/testtask-2021IvanDaMarya.git"
+  },
+  "keywords": [
+    "testtask"
+  ],
+  "author": "Lukyanenok Konstantin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loukianen/testtask-2021IvanDaMarya/issues"
+  },
+  "homepage": "https://github.com/loukianen/testtask-2021IvanDaMarya#readme",
+  "dependencies": {
+    "jquery": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.0",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0"
+  }
+}

@@ -1,6 +1,6 @@
 <?php
 // Пространство имен
-namespace src;
+namespace App;
 
 class Config
 {
@@ -15,6 +15,7 @@ class Config
  
     public function get($key)
     {
+        // print_r($this->data);
         // Проверка на наличие в массиве данных с заданным ключом.
         if (array_key_exists($key, $this->data)) {
             // Если ключ существует, возвращаем данные конфига.

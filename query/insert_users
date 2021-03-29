@@ -1,0 +1,2 @@
+INSERT OR REPLACE INTO `users` (`id`, `created`, `name`, `login`, `password`, `type`, `active`, `hotel`) VALUES
+(167, '2020-08-04 08:21:08', 'Чистых Елена', '9172612775', '4a5876b450b45371f6cfe5047ac8cd45', 5, 1, 2);
