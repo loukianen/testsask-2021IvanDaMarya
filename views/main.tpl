@@ -8,7 +8,7 @@
         <title>Salary calculation</title>
     </head>
     <body>
-      <main class="d-flex flex-column align-items-center mt-5">
+      <main class="d-flex flex-column align-items-center my-5">
         <div class="h3">Расчет зарплаты горничных</div>
         <form>
           <div class="form-row">

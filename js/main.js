@@ -37,7 +37,10 @@ const renderTable = (data, node) => {
   
   // строки
   tableHtmlData.push(...makeRestTableHtml(data));
-  tableElement.innerHTML = `<table class="table table-striped text-center border-bottom">${tableHtmlData.join()}</table>`;
+  const str = `<table class="table table-striped text-center border-bottom">${tableHtmlData.join(' ')}</table>`;
+  console.log(str);
+  tableElement.innerHTML = str;
+  console.log(tableElement.innerHTML);
   
   // готовим элементы под итог за месяц и размещаем в DOM
   const itogElement = document.createElement('div');
