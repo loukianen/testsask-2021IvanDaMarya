@@ -34,14 +34,11 @@ const renderTable = (data, node) => {
 
   // заголовок
   tableHtmlData.push('<thead><tr><th scope="col">Дата</th><th scope="col">Начало рабочего дня</th><th scope="col">Конец рабочего дня</th><th scope="col">Кол-во генеральных уборок</th><th scope="col">Кол-во текущих уборок</th><th scope="col">Кол-во заездов</th><th scope="col">Сумма оплаты за день</th></tr></thead>');
-  
+
   // строки
   tableHtmlData.push(...makeRestTableHtml(data));
-  const str = `<table class="table table-striped text-center border-bottom">${tableHtmlData.join(' ')}</table>`;
-  console.log(str);
-  tableElement.innerHTML = str;
-  console.log(tableElement.innerHTML);
-  
+  tableElement.innerHTML = `<table class="table table-striped text-center border-bottom">${tableHtmlData.join(' ')}</table>`;
+
   // готовим элементы под итог за месяц и размещаем в DOM
   const itogElement = document.createElement('div');
   itogElement.setAttribute('class', 'd-flex justify-content-between p-3 font-weight-bold');
