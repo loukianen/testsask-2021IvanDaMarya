@@ -25,14 +25,15 @@ const makeRestTableHtml = (data) => {
   return res;
 };
 
-const calcCalary = (data) => {
-  const dates = Object.keys(data).sort();
+const calcSalary = (data) => {
+  const dates = Object.keys(data);
   return dates.reduce((acc, day) => acc + data[day].sum, 0);
 };
 
-const renderTable = (data, targetNode) => {
-  const tableElement = targetNode;
-  tableElement.html(null);
+const renderTable = (data, node) => {
+  const parsedData = JSON.parse(data);
+  const tableElement = node;
+  tableElement.html('');
 
   // Массив, в который будем складывать строки таблицы
   const tableHtmlData = [];
@@ -40,7 +41,7 @@ const renderTable = (data, targetNode) => {
   const colHeadersHtml = colHeaders.map((item) => `<th scope="col">${item}</th>`).join();
   tableHtmlData.push(`<thead><tr>${colHeadersHtml}</tr></thead>`);
   // строки
-  tableHtmlData.push(...makeRestTableHtml(data));
+  tableHtmlData.push(...makeRestTableHtml(parsedData));
   // готовим таблицу
   const table = $(`<table class="table table-striped text-center border-bottom"></table>`);
   table.html(`${tableHtmlData.join(' ')}`);
@@ -49,7 +50,7 @@ const renderTable = (data, targetNode) => {
   const itogElement = $('<div></div>')
     .attr('class', 'd-flex justify-content-between p-3 font-weight-bold');
   $('<div>Итоговая сумма</div>').appendTo(itogElement);
-  const salary = calcCalary(data);
+  const salary = calcSalary(parsedData);
   $(`<div>${salary} рублей</div>`).appendTo(itogElement);
 
   tableElement.append(table, itogElement);
@@ -57,14 +58,14 @@ const renderTable = (data, targetNode) => {
 
 const run = () => {
   $(document).ready(() => {
-    $('<div id="#maintable"></div>').appendTo('main');
     $('form').submit((e) => {
       e.preventDefault();
+
       const formData = new FormData(e.target);
       const userId = formData.get('name');
       const period = formData.get('period');
 
-      if (userId !== 'Выберите из списка' && period) { //To do
+      if (userId && period) {
         $.get('/statistics', { userId, period })
           .done((data) => {
             renderTable(data, $('#maintable'));
