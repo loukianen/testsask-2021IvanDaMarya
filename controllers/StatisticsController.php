@@ -75,9 +75,7 @@ class StatisticsController
 
       $result = array_merge_recursive($workingDays, $daysStatistic);
       
-      $jsonData = json_encode($result, true);
-      print_r($jsonData);
-      return $jsonData;
+      echo json_encode($result, true);
     }
 }
 ?>
