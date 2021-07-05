@@ -5,7 +5,7 @@ use App\Tpl;
 
 class NotFoundController
 {
-  private $tpl;
+    private $tpl;
     public function run()
     {
       $this->tpl = new Tpl();
