@@ -2,28 +2,24 @@
 namespace Controllers;
 
 use App\Tpl;
-use App\App;
+use Models\UserModel;
 
 class MainController
 {
-    // Переменная для отрисовщика шаблонов
+    // Переменные для отрисовщика шаблонов и модели
     private $tpl;
+    private $model;
 
     public function run()
     {
       $this->tpl = new Tpl();
+      $this->model = new UserModel;
       return $this->render();
-    }
-    // Выбираем пользователей из базы по типу
-    private function getUsersData()
-    {
-      $query = 'SELECT `id`, `name` FROM `users` WHERE `type` = 5 ORDER BY `name`';
-      return App::$db->query($query);
     }
 
     private function render()
     {
-      $usersData = $this->getUsersData();
+      $usersData = $this->model->getUsersData();
       $this->tpl->makeUsersList($usersData);
       $this->tpl->render('main');
 	}
