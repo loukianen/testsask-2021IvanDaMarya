@@ -3,7 +3,7 @@ namespace Models;
 
 use App\App;
 
-class StatisticsModel
+class StatisticsModel extends BaseModel
 {
     private $staffId;
 
@@ -30,17 +30,6 @@ class StatisticsModel
           return $acc;
         }, ['sum' => 0, 'check_in' => 0, 'general' => 0, 'current' => 0]);
       return $statistic;
-    }
-
-    private function getPrice($work)
-    {
-      $roomTypeQuery = 'SELECT `type` FROM rooms WHERE `id` = ' . $work['room'];
-      $roomType = $roomType = App::$db->query($roomTypeQuery)[0]['type'];
-
-      $workPriceQuery = 'SELECT `price` FROM prices WHERE `room_type` = ' . $roomType . ' AND `work` = ' . $work['work'];
-      $price = App::$db->query($workPriceQuery)[0]['price'];
-
-      return $price;
     }
 
     public function getStatistics($data)
