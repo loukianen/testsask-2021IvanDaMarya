@@ -11,7 +11,9 @@ class Db
     {
       if ($this->linkDb == null) {
         $this->linkDb = new \SQLite3('db/phpsqlite.db');
-        $this->prepare();
+        if (count($this->query('SELECT * FROM `sqlite_master`')) == 0) {
+          $this->prepare();
+        }
       }
       return $this->linkDb;
     }

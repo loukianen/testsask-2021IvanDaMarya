@@ -54,7 +54,8 @@ class Tpl
     // Добавление новой переменной для шаблона day.
     public function makeDayWorks($data)
     {
-      ['works' => $works, 'userName' => $userName, 'date' => $date] = $data;
+      ['works' => $works, 'userName' => $userName, 'date' => $day] = $data;
+      $date = date_create_from_format('Y-m-d', $day);
       $this->varList['dayData'] = $works;
       $salary = array_reduce($works, function($acc, $work)
       {
@@ -63,7 +64,7 @@ class Tpl
       });
 
       $daySalary = $this->getElement('daySalary', ['salary' => $salary]);
-      $tableLabel = $this->getElement('dayTableLabel', ['userName' => $userName, 'date' => $date]);
+      $tableLabel = $this->getElement('dayTableLabel', ['userName' => $userName, 'date' => $date->format('d.m.Y')]);
 
       $tableRows = $this->generateTableRows($works);
       $tablePartsData = [

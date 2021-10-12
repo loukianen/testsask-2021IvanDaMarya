@@ -13,10 +13,14 @@ const colHeaders = [
 const makeRestTableHtml = (data) => {
   const dates = Object.keys(data).sort();
   const res = dates.map((date) => {
+    const localDate = new Date(date);
+    const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' }
     const { start, end, sum, check_in, general, current, staff } = data[date];
     const dayColHtml = (
       `<th scope="row">
-        <a href="/days/?date=${date}&staff=${staff}" target="${date}">${date}</a>
+        <a href="/days/?date=${date}&staff=${staff}" target="${date}">
+          ${localDate.toLocaleDateString('ru-Ru', dateOptions)}
+        </a>
       </th>`
     );
     const otherCols = [start, end, general, current, check_in, sum];
