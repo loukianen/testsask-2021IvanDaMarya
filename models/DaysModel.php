@@ -5,33 +5,46 @@ use App\App;
 
 class DaysModel extends BaseModel
 {
-    private function generateWorksInfo($worksData)
+  private function generateWorksInfoQuery($userId, $startPeriod, $endPeriod)
+  {
+    return 'SELECT
+      rooms.id,
+      rooms.num,
+      builds.name AS b_name,
+      rooms.type,
+      works.name AS w_name,
+      s.start,
+      s.end,
+      s.work AS workType,
+      s.bed,
+      s.towels
+    FROM statistics AS s
+    JOIN rooms ON rooms.id = s.room
+    JOIN works ON works.id = s.work
+    JOIN builds ON builds.id = rooms.build
+    WHERE `staff` = ' . $userId . '
+      AND (`start` BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ')
+      AND `work` > 0';
+  }
+
+  private function generateWorksInfo($query)
     {
+      $worksData = App::$db->query($query);
+
       return array_map(function($work)
       {
-        ['room' => $roomId, 'start' => $start, 'end' => $end, 'work' => $workType, 'bed' => $bed, 'towels' => $towels] = $work;
         $result = [];
-
-        // Информация по комнате
-        $roomInfoQuery = 'SELECT `num`, `build`, `type` FROM rooms WHERE `id` = ' . $roomId;
-        $roomInfo = App::$db->query($roomInfoQuery);
-        ['num' => $num, 'build' => $build, 'type'=> $roomType] = $roomInfo[0];
-        $buildNameQuery = 'SELECT `name` FROM builds WHERE `id` = ' . $build;
-        $buildName = App::$db->query($buildNameQuery);
-        $result['room'] = $num . ' корпус ' . $buildName[0]['name'];
-        $result['roomType'] = $roomType;
-
-        // Тип уборки
-        $workNameQuery = 'SELECT `name` FROM works WHERE `id` = ' . $workType;
-        $result['work'] = App::$db->query($workNameQuery)[0]['name'];
+        $result['room'] = $work['num'] . ' корпус ' . $work['b_name'];
+        $result['roomType'] = $work['type'];
+        $result['work'] = $work['w_name'];
 
         // Время
-        $result['start'] = substr(explode(' ', $start)[1], 0, 5);
-        $result['end'] = substr(explode(' ', $end)[1], 0, 5);
+        $result['start'] = substr(explode(' ', $work['start'])[1], 0, 5);
+        $result['end'] = substr(explode(' ', $work['end'])[1], 0, 5);
 
         // Деньги
-        $addishinalAmount = ($workType === 3) ? $bed * 30 + $towels * 10 : 0; //Если текущая уборка, считаем полотенца и белье
-        $result['sum'] = $this->getPrice($work) + $addishinalAmount;
+        $addishinalAmount = ($work['workType'] === 3) ? $work['bed'] * 30 + $work['towels'] * 10 : 0; //Если текущая уборка, считаем полотенца и белье
+        $result['sum'] = $this->getPrice(['room' => $work['id'], 'work' => $work['workType']]) + $addishinalAmount;
         return $result;
       }, $worksData);
     }
@@ -45,10 +58,8 @@ class DaysModel extends BaseModel
 
       $userName = App::$db->query('SELECT `name` FROM users WHERE `id` = ' . $userId)[0]['name'];
 
-      $worksQuery = 'SELECT `id`, `room`, `start`, `end`, `work`, `bed`, `towels` FROM statistics WHERE `staff` = ' . $userId . ' AND (`start` BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ') AND `work` > 0';
-      $worksData = App::$db->query($worksQuery);
-
-      $works = $this->generateWorksInfo($worksData);
+      $query = $this->generateWorksInfoQuery($userId, $startPeriod, $endPeriod);
+      $works = $this->generateWorksInfo($query);
       return ['works' => $works, 'userName' => $userName, 'date' => $date];
     }
 }
