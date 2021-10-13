@@ -5,15 +5,8 @@ use App\App;
 
 class BaseModel
 {
-    public function getPrice($work)
-    {
-      $roomTypeQuery = 'SELECT `type` FROM rooms WHERE `id` = ' . $work['room'];
-      $workPriceQuery = 'SELECT `price` FROM prices
-        WHERE `room_type` = (' . $roomTypeQuery . ') AND `work` = ' . $work['work'];
-
-      $price = App::$db->query($workPriceQuery)[0]['price'];
- 
-      return $price;
-    }
+  const ID_OF_EXTRA_MONEY_WORK = 3;
+  const EXTRA_MONEY_FOR_BED = 30;
+  const EXTRA_MONEY_FOR_TOWELS = 10;
 }
 ?>

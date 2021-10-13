@@ -22,10 +22,10 @@ class DaysModel extends BaseModel
       s.work AS workType,
       s.bed,
       s.towels,
-      CASE WHEN s.work == ' . $idOfWorkWithExtraMoney . '
+      CASE WHEN s.work == ' . BaseModel::ID_OF_EXTRA_MONEY_WORK . '
         THEN prices.price
-          + s.bed * ' . $extraMoneyForBed . '
-          + s.towels * ' . $extraMoneyForTowels . '
+          + s.bed * ' . BaseModel::EXTRA_MONEY_FOR_BED . '
+          + s.towels * ' . BaseModel::EXTRA_MONEY_FOR_TOWELS . '
         ELSE prices.price
       END AS sum
     FROM statistics AS s
