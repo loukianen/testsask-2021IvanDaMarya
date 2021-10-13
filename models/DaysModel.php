@@ -7,6 +7,10 @@ class DaysModel extends BaseModel
 {
   private function generateWorksInfoQuery($userId, $startPeriod, $endPeriod)
   {
+    $idOfWorkWithExtraMoney = 3;
+    $extraMoneyForBed = 30;
+    $extraMoneyForTowels = 10;
+
     return 'SELECT
       rooms.id,
       rooms.num,
@@ -17,14 +21,22 @@ class DaysModel extends BaseModel
       s.end,
       s.work AS workType,
       s.bed,
-      s.towels
+      s.towels,
+      CASE WHEN s.work == ' . $idOfWorkWithExtraMoney . '
+        THEN prices.price
+          + s.bed * ' . $extraMoneyForBed . '
+          + s.towels * ' . $extraMoneyForTowels . '
+        ELSE prices.price
+      END AS sum
     FROM statistics AS s
     JOIN rooms ON rooms.id = s.room
     JOIN works ON works.id = s.work
     JOIN builds ON builds.id = rooms.build
-    WHERE `staff` = ' . $userId . '
-      AND (`start` BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ')
-      AND `work` > 0';
+    JOIN prices ON prices.work = works.id
+    WHERE s.staff = ' . $userId . '
+      AND (s.start BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ')
+      AND s.work > 0
+      AND prices.room_type = rooms.type';
   }
 
   private function generateWorksInfo($query)
@@ -37,14 +49,14 @@ class DaysModel extends BaseModel
         $result['room'] = $work['num'] . ' корпус ' . $work['b_name'];
         $result['roomType'] = $work['type'];
         $result['work'] = $work['w_name'];
+        // Получаем время из даты
+        $startDate = date_create_from_format('Y-m-d H:i:s', $work['start']);
+        $result['start'] = $startDate->format('H:i');
+        $endDate = date_create_from_format('Y-m-d H:i:s', $work['end']);
+        $result['end'] = $startDate->format('H:i');
 
-        // Время
-        $result['start'] = substr(explode(' ', $work['start'])[1], 0, 5);
-        $result['end'] = substr(explode(' ', $work['end'])[1], 0, 5);
+        $result['sum'] = $work['sum'];
 
-        // Деньги
-        $addishinalAmount = ($work['workType'] === 3) ? $work['bed'] * 30 + $work['towels'] * 10 : 0; //Если текущая уборка, считаем полотенца и белье
-        $result['sum'] = $this->getPrice(['room' => $work['id'], 'work' => $work['workType']]) + $addishinalAmount;
         return $result;
       }, $worksData);
     }
@@ -56,7 +68,7 @@ class DaysModel extends BaseModel
       $startPeriod = '"' .$date . ' 00:00:00"';
       $endPeriod = '"' .$date . ' 23:59:59"';
 
-      $userName = App::$db->query('SELECT `name` FROM users WHERE `id` = ' . $userId)[0]['name'];
+      $userName = App::$db->query('SELECT name FROM users WHERE id = ' . $userId)[0]['name'];
 
       $query = $this->generateWorksInfoQuery($userId, $startPeriod, $endPeriod);
       $works = $this->generateWorksInfo($query);
