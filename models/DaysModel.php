@@ -7,10 +7,6 @@ class DaysModel extends BaseModel
 {
   private function generateWorksInfoQuery($userId, $startPeriod, $endPeriod)
   {
-    $idOfWorkWithExtraMoney = 3;
-    $extraMoneyForBed = 30;
-    $extraMoneyForTowels = 10;
-
     return 'SELECT
       rooms.id,
       rooms.num,

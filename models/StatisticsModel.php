@@ -18,13 +18,20 @@ class StatisticsModel extends BaseModel
       return $price;
     }
 
-    private function getDayStatistics($dayDate)
+    private function getDayStatisticsQuery($dayDate)
     {
       $startPeriod = '"' .$dayDate . ' 00:00:00"';
       $endPeriod = '"' .$dayDate . ' 23:59:59"';
-      $fields = '`room`, `work`, `bed`, `towels`';
+      return 'SELECT room, work, bed, towels
+        FROM statistics
+        WHERE staff = ' . $this->staffId . '
+          AND (start BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ')
+          AND (work > 0)';
+    }
 
-      $periodQury = 'SELECT ' . $fields . ' FROM statistics WHERE `staff` = ' . $this->staffId . ' AND (`start` BETWEEN '. $startPeriod . ' AND ' . $endPeriod . ') AND (`work` > 0)';
+    private function getDayStatistics($dayDate)
+    {
+      $periodQury = $this->getDayStatisticsQuery($dayDate);
       $periodData = App::$db->query($periodQury);
 
       $statistic = array_reduce($periodData, function($acc, $item)
@@ -37,7 +44,6 @@ class StatisticsModel extends BaseModel
           $acc['sum'] += $this->getPrice($item) + $addishinalAmount;
 
           $worksMapping = [1 => 'check_in', 2 => 'general', 3 => 'current'];
-
           $acc[$worksMapping[$work]] += 1;
 
           return $acc;
@@ -45,7 +51,7 @@ class StatisticsModel extends BaseModel
       return $statistic;
     }
 
-    public function getStatistics($data)
+    private function getStatisticsQuery($data)
     {
       ['userId' => $userId, 'period' => $period] = $data;
       $this->staffId = $userId;
@@ -54,27 +60,39 @@ class StatisticsModel extends BaseModel
       $endDate = date_create_from_format('Y-m-d H:i:s', $period . '-01 23:59:59');
       $endPeriod = '"' . $endDate->format('Y-m-t H:i:s') . '"';
 
-      $workingDaysQuery = 'SELECT start, end, staff FROM statistics WHERE staff = ' . $userId . ' AND (start BETWEEN ' . $startPeriod . ' AND ' . $endPeriod . ') AND work = 0';
+      return 'SELECT start, end, staff
+        FROM statistics
+        WHERE staff = ' . $userId . '
+          AND (start BETWEEN ' . $startPeriod . ' AND ' . $endPeriod . ')
+          AND work = 0';
+    }
+
+    public function getStatistics($data)
+    {
+      $workingDaysQuery = $this->getStatisticsQuery($data);
       $workingDaysData = App::$db->query($workingDaysQuery);
 
       $workingDays = array_reduce($workingDaysData, function($acc, $arr)
         {
-         [$day, $startTime] = explode(' ', $arr['start']);
-         [, $endTime] = explode(' ', $arr['end']);
-         $acc[$day] = ['start' => substr($startTime, 0, 5), 'end' => substr($endTime, 0, 5), 'staff' => $arr['staff']];
+          $startTime = date_create_from_format('Y-m-d H:i:s', $arr['start']);
+          $endTime = date_create_from_format('Y-m-d H:i:s', $arr['end']);
+
+          $acc[$startTime->format('Y-m-d')] = [
+            'start' => $startTime->format('H:i'),
+            'end' => $endTime->format('H:i'),
+            'staff' => $arr['staff']
+          ];
+
          return $acc;
         }, []);
 
-      $dates = array_keys($workingDays);
-      $daysStatistic = array_reduce($dates, function($acc, $date)
+      $daysStatistic = array_reduce(array_keys($workingDays), function($acc, $date)
         {
           $acc[$date] = $this->getDayStatistics($date);
           return $acc;
         }, []);
 
-      $result = array_merge_recursive($workingDays, $daysStatistic);
-      
-      return $result;
+      return array_merge_recursive($workingDays, $daysStatistic);
     }
 }
 ?>
